@@ -1,0 +1,32 @@
+#canvas {
+  border: 5px solid #F5F5F5;
+  border-radius: 6px;
+}
+
+.btn__container {
+  width: 600px;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+
+}
+.btn {
+  width: 200px;
+  height: 40px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  background-color: #9ec34b;
+  color: #FFF;
+  outline: none; /* 選択したときの枠を消す */
+}
+
+.btn:hover {
+  opacity: .4;
+}
+
+.btn:first-child {
+  margin-right: 10px;
+}
