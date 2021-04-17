@@ -1,0 +1,37 @@
+#canvas {
+  border: 5px solid #F5F5F5;
+  border-radius: 6px;
+}
+
+.main__title {
+  color: #0099FF;
+  margin-left: 20px;
+}
+
+.btn__container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  width: 600px;
+}
+
+.btn {
+  background-color: #9ec34b;
+  border: none;
+  border-radius: 10px;
+  color: #FFF;
+  font-size: 16px;
+  font-weight: bold;
+  height: 40px;
+  outline: none; /* 選択したときのデフォルトで付いてしまう枠を消す */
+  text-align: center;
+  width: 200px;
+}
+
+.btn:hover {
+  opacity: .4;
+}
+
+.btn:first-child {
+  margin-right: 10px;
+}
