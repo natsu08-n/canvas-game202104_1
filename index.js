@@ -56,6 +56,10 @@ class Character {
       currentSelected = this;
     } 
   }
+  move() {
+    this.x += 5; //xがある数値より大きくなったら、の処理で枠内跳ね返るようにする
+    this.y += 5;
+  }
 }
 
 canvas.addEventListener("click", e => {
@@ -75,7 +79,9 @@ canvas.addEventListener("click", e => {
 });
 
 function mainloop() {
+  ctx.clearRect(0, 0, 800, 800);
   characters.forEach(chara => {
+    chara.move();
       chara.draw();
     });
   requestAnimationFrame(mainloop);
