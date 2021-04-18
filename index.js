@@ -44,6 +44,8 @@ class Character {
     this.image.src = this.src;
     this.image.id = this.id;
     this.image.onload = () => this.draw();
+    this.dx = 4;
+    this.dy = 4;
     characters.push(this);
   }
   draw() {
@@ -57,8 +59,20 @@ class Character {
     } 
   }
   move() {
-    this.x += 5; //xがある数値より大きくなったら、の処理で枠内跳ね返るようにする
-    this.y += 5;
+    if(this.x > (canvas.width - 200)) {
+      this.dx -= 4;
+    } else if(this.x < 0) {
+      this.dx += 4;
+    }
+    this.x += this.dx;
+
+    if(this.y > (canvas.height - 200)) {
+      this.dy -= 4;
+    } else if (this.y < 0) {
+      this.dy += 4;
+    }
+    this.y += this.dy;
+    // (memo)枠のギリギリで生成するとスピードが早い
   }
 }
 
@@ -68,8 +82,8 @@ canvas.addEventListener("click", e => {
     x: e.clientX,
     y: e.clientY
   }
-  if(mode !== 'create') {
-    currentSelected = null;
+  if(mode !== 'create') {//ユニコーンを動かす時
+    currentSelected = null;//ユニコーンの選択対象を空にしておく
     characters.forEach(chara => {
       chara.clicked(point);
     });
@@ -82,7 +96,7 @@ function mainloop() {
   ctx.clearRect(0, 0, 800, 800);
   characters.forEach(chara => {
     chara.move();
-      chara.draw();
+    chara.draw();
     });
   requestAnimationFrame(mainloop);
 }
