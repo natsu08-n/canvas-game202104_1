@@ -44,12 +44,12 @@ class Character {
     this.image.src = this.src;
     this.image.id = this.id;
     this.image.onload = () => this.draw();
-    this.dx = 4;
-    this.dy = 4;
+    this.speedX = 4;
+    this.speedY = 4;
     characters.push(this);
   }
   draw() {
-    ctx.drawImage(this.image, this.x, this.y, 200, 200);
+    ctx.drawImage(this.image, this.x - 100, this.y - 100, 200, 200);
   }
   clicked(point) {
     if((point.x > this.x && this.x + 200 > point.x) &&(point.y > this.y && this.y + 200 > point.y)) {
@@ -59,20 +59,23 @@ class Character {
     } 
   }
   move() {
-    if(this.x > (canvas.width - 200)) {
-      this.dx -= 4;
-    } else if(this.x < 0) {
-      this.dx += 4;
-    }
-    this.x += this.dx;
+    if(this.x > canvas.width || this.x < 0) {
+      this.speedX *= -1;
+    } 
 
-    if(this.y > (canvas.height - 200)) {
-      this.dy -= 4;
-    } else if (this.y < 0) {
-      this.dy += 4;
+    if(this.y > canvas.height || this.y < 0) {
+      this.speedY *= -1;
     }
-    this.y += this.dy;
-    // (memo)枠のギリギリで生成するとスピードが早い
+
+    if(this.x < 0) {
+      this.x = 0;
+    }
+    if(this.y < 0) {
+      this.y = 0;
+    }
+
+    this.x += this.speedX;
+    this.y += this.speedY;
   }
 }
 
@@ -88,7 +91,8 @@ canvas.addEventListener("click", e => {
       chara.clicked(point);
     });
   } else if(mode === 'create'){
-    new Character(point.x - 100, point.y - 100, './business_unicorn_company.png', 'chara_1');
+    // console.log(point);
+    new Character(point.x, point.y, './business_unicorn_company.png', 'chara_1');
   }
 });
 
