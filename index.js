@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 let currentSelected = null;
 let mode = '';
 let characters = [];
+let enemies = [];
 
 const createBtn = document.getElementById('js-create');
 const moveBtn = document.getElementById('js-move');
@@ -22,16 +23,12 @@ moveBtn.addEventListener("click", (e) => {
     }
     ctx.clearRect(0, 0, 800, 800);
     currentSelected.move(e.code);
-    // console.log(currentSelected);
-    // if (currentSelected.x < 300 && currentSelected.y < 300) {
-    //   alert("敵と遭遇");
-    // }
   }
   mode = 'move'
 });
 
-// ユニコーンのクラス
-class Character {
+// ゲームオブジェクトクラス（共通クラス）
+class GameObject {
   constructor(x, y, src, id) {
     this.x = x;
     this.y = y;
@@ -44,12 +41,20 @@ class Character {
     this.image = new Image();
     this.image.src = this.src;
     this.image.id = this.id;
-    this.speed = 20;
     this.image.onload = () => this.draw();
-    characters.push(this);
   }
   draw() {
     ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+  }
+}
+
+
+// ユニコーンのクラス
+class Character extends GameObject {
+  constructor(x, y, src, id) {
+    super(x, y, src, id)
+    this.speed = 20;
+    characters.push(this);
   }
   clicked(point) {
     if ((point.x > this.x && this.x + 200 > point.x) && (point.y > this.y && this.y + 200 > point.y)) {
@@ -75,44 +80,31 @@ class Character {
 }
 
 // 敵（オーク）のクラス
-class Enemy {
+class Enemy extends GameObject {
   constructor(x, y, src, id) {
-    this.x = x;
-    this.y = y;
-    this.width = 50;
-    this.height = 50;
-    this.centerX = this.x + this.width / 2;
-    this.centerY = this.y + this.height / 2;
-    this.src = src;
-    this.id = id;
-    this.image = new Image();
-    this.image.src = this.src;
-    this.image.id = this.id;
-    this.image.onload = () => this.draw();
-  }
-  draw() {
-    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    super(x, y, src, id)
   }
   move() {
-    this.x += 1;
-    this.y += 1;
+    this.x += .5;
+    this.y += .5;
     this.centerX = this.x + this.width / 2;
     this.centerY = this.y + this.height / 2;
     this.collision();
   }
   collision() {
     characters.forEach(chara => {
-      //敵との当たり判定（2点間の中心座標の距離）
-      let distance = Math.pow(this.x - chara.x, 2) + Math.pow(this.y - chara.y, 2);
-      // console.log(chara.x);
-      // console.log(this.x);
-      let sqrt = Math.sqrt(distance);
-      console.log(sqrt);
-      if(sqrt < 50) {
-        alert("hit!");
+      let distance = this.calcDistance(chara);
+      if(distance < 30) {
+        console.log("敵と遭遇しました");
       }
-      // console.log(distance);
     });
+  }
+  // 距離を計算するメソッド
+  calcDistance(chara) {
+    //敵との当たり判定（2点間の中心座標の距離）
+    let sqrt = Math.pow(this.x - chara.x, 2) + Math.pow(this.y - chara.y, 2);
+    let distance = Math.sqrt(sqrt);
+    return distance;
   }
 }
 
@@ -133,14 +125,14 @@ canvas.addEventListener("click", e => {
 
 });
 
-// window.onload = function(){
-//   const enemyImg = new Enemy(400, 400, './img/fantasy_orc.png', 'enemy_1');
-//   console.log(enemyImg);
-//   // enemyImg.draw();ここで描けない
-// }
-
 // 敵の処理
-const enemyImg = new Enemy(100, 100, './img/fantasy_orc.png', 'enemy_1');
+
+function generateEnemy() {
+  const enemy = new Enemy(100, 100, './img/fantasy_orc.png', 'enemy_1');
+  enemies.push(enemy);
+}
+
+setInterval(generateEnemy, 2000);
 
 function mainloop() {
   ctx.clearRect(0, 0, 800, 800);
@@ -150,8 +142,11 @@ function mainloop() {
   });
 
   // console.log(enemyImg);
-  enemyImg.move();
-  enemyImg.draw(); //今の指定だとx座標が100,y座標が100
+  enemies.forEach(enemy => {
+    enemy.move();
+    enemy.draw();
+
+  })
 
   requestAnimationFrame(mainloop);
 }
