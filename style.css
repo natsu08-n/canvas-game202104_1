@@ -35,3 +35,7 @@
 .btn:first-child {
   margin-right: 10px;
 }
+
+.atari {
+  background-color: yellow;
+}

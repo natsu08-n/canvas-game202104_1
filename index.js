@@ -85,7 +85,7 @@ class Enemy extends GameObject {
     super(x, y, src, id)
   }
   move() {
-    this.x += .5;
+    this.x += 0;
     this.y += .5;
     this.centerX = this.x + this.width / 2;
     this.centerY = this.y + this.height / 2;
@@ -94,9 +94,10 @@ class Enemy extends GameObject {
   collision() {
     characters.forEach(chara => {
       let distance = this.calcDistance(chara);
-      if(distance < 30) {
+      if(distance <= 30) {
         console.log("敵と遭遇しました");
-      }
+          canvas.classList.add('atari');
+        }
     });
   }
   // 距離を計算するメソッド
@@ -126,13 +127,14 @@ canvas.addEventListener("click", e => {
 });
 
 // 敵の処理
-
 function generateEnemy() {
-  const enemy = new Enemy(100, 100, './img/fantasy_orc.png', 'enemy_1');
-  enemies.push(enemy);
+  for(let i = 0; i < 6; i++) {
+    let enemy = new Enemy(110 * i, 0, './img/fantasy_orc.png', 'enemy_1');
+    enemies.push(enemy);
+  }
 }
 
-setInterval(generateEnemy, 2000);
+setInterval(generateEnemy, 5000);
 
 function mainloop() {
   ctx.clearRect(0, 0, 800, 800);
