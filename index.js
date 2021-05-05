@@ -106,14 +106,13 @@ class Character extends GameObject {
 class Enemy extends GameObject {
   constructor(x, y, src, id) {
     super(x, y, src, id)
-    this.speed = Math.random() * 5 + 2;
+    this.speed = Math.random() * 5 + 3;
   }
   move() {
     this.x += 0;
     this.y += this.speed;
     this.centerX = this.x + this.width / 2;
     this.centerY = this.y + this.height / 2;
-    // this.collision();
   }
   
 }
@@ -143,7 +142,7 @@ function generateEnemy() {
   }
 }
 
-setInterval(generateEnemy, 3000);
+setInterval(generateEnemy, 2000);
 
 function mainloop() {
   let flg = false;
@@ -193,5 +192,7 @@ function updateTime() {
 window.onload = function () {
   init();
   updateTime();
+  const initialChara = new Character(250, 550, './img/business_unicorn_company.png', 'chara_1');
+  initialChara.draw();
 }
 
