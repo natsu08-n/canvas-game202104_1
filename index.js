@@ -8,14 +8,14 @@ let enemies = [];
 const timerId = document.getElementById('timer');
 let LimitTime;
 
-const createBtn = document.getElementById('js-create');
+// const createBtn = document.getElementById('js-create');
 const moveBtn = document.getElementById('js-move');
 
-createBtn.addEventListener("click", (e) => {
-  // e.preventDefault();//「クリックしたとき」のデフォルト挙動キャンセル
-  window.onkeydown = null;
-  mode = 'create';
-});
+// createBtn.addEventListener("click", (e) => {
+//   // e.preventDefault();//「クリックしたとき」のデフォルト挙動キャンセル
+//   window.onkeydown = null;
+//   mode = 'create';
+// });
 
 moveBtn.addEventListener("click", (e) => {
   e.preventDefault();
@@ -62,8 +62,6 @@ class Character extends GameObject {
   }
   clicked(point) {
     if ((point.x > this.x && this.x + 200 > point.x) && (point.y > this.y && this.y + 200 > point.y)) {
-      // console.log('xy座標 ' + this.id);
-      // elmObject = this.id;
       currentSelected = this;
     }
   }
@@ -86,10 +84,9 @@ class Character extends GameObject {
     this.hit = false;
     enemies.forEach(enemy => {
       let distance = this.calcDistance(enemy);
+      console.log(distance);
       if (distance <= 30) {
         this.hit = true;
-        // console.log("敵と遭遇しました");
-        // console.log("chara.hit: " + chara.hit);
       }
     });
   }
@@ -123,14 +120,15 @@ canvas.addEventListener("click", e => {
     x: e.clientX,
     y: e.clientY
   }
-  if (mode !== 'create') {
+  if (mode === 'move') {
     currentSelected = null;
     characters.forEach(chara => {
       chara.clicked(point);
     });
-  } else if (mode === 'create') {
-    new Character(point.x - 100, point.y - 100, './img/business_unicorn_company.png', 'chara_1');
-  }
+  } 
+  // else if (mode === 'create') {
+  //   new Character(point.x - 100, point.y - 100, './img/business_unicorn_company.png', 'chara_1');
+  // }
 
 });
 
@@ -154,7 +152,6 @@ function mainloop() {
       flg = true;
     }
   });
-  // console.log(flg);
 
   enemies.forEach(enemy => {
     enemy.move();
