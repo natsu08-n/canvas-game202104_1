@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
   <link rel="stylesheet" href="style.css">
   <title>Document</title>
 </head>
@@ -12,14 +13,18 @@
 <body>
   <div>
     <h2 class="main__title">ユニコーンで遊ぼう！</h2>
-    <p>制限時間 <span id="timer"></span>秒</p>
+    <div class="count__container">
+      <p>制限時間 <span id="timer" class="time__count"></span>秒</p>
+      <p>ライフ: <meter min="0" max="100" value="100" optimum="85" class="js-lifeCount"></meter></p>
+
+    </div>
 
   </div>
-  <canvas id="canvas" width="600" height="600"></canvas>
+  <canvas id="canvas" width="600" height="600" class="canvas__initial"></canvas>
 
   <div class="btn__container">
     <!-- <button id = "js-create" class="btn btn__create">ユニコーン生成</button> -->
-    <button id = "js-move" class="btn btn__move">ユニコーンを動かす</button>
+    <!-- <button id = "js-move" class="btn btn__move">ユニコーンを動かす</button> -->
   </div>
   <script src="index.js"></script>
 </body>

@@ -1,15 +1,18 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let currentSelected = null;
-let mode = '';
 let characters = [];
 let enemies = [];
 // 制限時間について
 const timerId = document.getElementById('timer');
 let LimitTime;
 
+const lifeCounter = document.getElementsByClassName('js-lifeCount');
+// let lifeCounterValue = lifeCounter[0].value;
+// console.log(lifeCounterValue);
+
 // const createBtn = document.getElementById('js-create');
-const moveBtn = document.getElementById('js-move');
+
 
 // createBtn.addEventListener("click", (e) => {
 //   // e.preventDefault();//「クリックしたとき」のデフォルト挙動キャンセル
@@ -17,18 +20,25 @@ const moveBtn = document.getElementById('js-move');
 //   mode = 'create';
 // });
 
-moveBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-  // モードがmoveの時だけonkeydown使うのでこちらに移動
-  window.onkeydown = (e) => {
-    if (currentSelected === null) {
-      return
-    }
-    ctx.clearRect(0, 0, 800, 800);
-    currentSelected.move(e.code);
-  }
-  mode = 'move'
-});
+// クラスにしても良い
+// class MoveBtn {
+//   constructor(mode) {
+//     this.mode = mode;
+//     const moveBtn = document.getElementById('js-move');
+//     moveBtn.addEventListener("click", (e) => {
+//       e.preventDefault();
+//       // モードがmoveの時だけonkeydown使うのでこちらに移動
+      // window.onkeydown = (e) => {
+      //   if (currentSelected === null) {
+      //     return
+      //   }
+      //   ctx.clearRect(0, 0, 800, 800);
+      //   currentSelected.move(e.code);
+      // }
+//       mode = 'move'
+//     });
+//   }
+// }
 
 // ゲームオブジェクトクラス（共通クラス）
 class GameObject {
@@ -51,7 +61,6 @@ class GameObject {
   }
 }
 
-
 // ユニコーンのクラス
 class Character extends GameObject {
   constructor(x, y, src, id) {
@@ -59,6 +68,13 @@ class Character extends GameObject {
     this.speed = 20;
     this.hit = false;
     characters.push(this);
+    this.initialize();
+  }
+  initialize() {
+    window.onkeydown = (e) => {
+      ctx.clearRect(0, 0, 800, 800);
+      this.move(e.code);
+    }
   }
   clicked(point) {
     if ((point.x > this.x && this.x + 200 > point.x) && (point.y > this.y && this.y + 200 > point.y)) {
@@ -84,7 +100,7 @@ class Character extends GameObject {
     this.hit = false;
     enemies.forEach(enemy => {
       let distance = this.calcDistance(enemy);
-      console.log(distance);
+      // console.log(distance);
       if (distance <= 30) {
         this.hit = true;
       }
@@ -114,23 +130,23 @@ class Enemy extends GameObject {
   
 }
 
-canvas.addEventListener("click", e => {
-  const rect = canvas.getBoundingClientRect();//getBoundingClientRect();メソッドでキャンバスの座標を取得する
-  const point = {
-    x: e.clientX,
-    y: e.clientY
-  }
-  if (mode === 'move') {
-    currentSelected = null;
-    characters.forEach(chara => {
-      chara.clicked(point);
-    });
-  } 
-  // else if (mode === 'create') {
-  //   new Character(point.x - 100, point.y - 100, './img/business_unicorn_company.png', 'chara_1');
-  // }
+// canvas.addEventListener("click", e => {
+//   const rect = canvas.getBoundingClientRect();//getBoundingClientRect();メソッドでキャンバスの座標を取得する
+//   const point = {
+//     x: e.clientX,
+//     y: e.clientY
+//   }
+//   if (mode === 'move') {
+//     currentSelected = null;
+//     characters.forEach(chara => {
+//       chara.clicked(point);
+//     });
+//   } 
+//   // else if (mode === 'create') {
+//   //   new Character(point.x - 100, point.y - 100, './img/business_unicorn_company.png', 'chara_1');
+//   // }
 
-});
+// });
 
 // 敵の処理
 function generateEnemy() {
@@ -141,6 +157,18 @@ function generateEnemy() {
 }
 
 setInterval(generateEnemy, 2000);
+
+function settingLife() {
+  let lifeCounterValue = lifeCounter[0].value;
+  lifeCounterValue = lifeCounterValue - 2;
+  console.log(lifeCounterValue);
+  lifeCounter[0].setAttribute("value", lifeCounterValue);
+
+  if(lifeCounterValue <= 0) {
+    console.log("ゲームオーバー");
+    return;
+  }
+}
 
 function mainloop() {
   let flg = false;
@@ -160,6 +188,7 @@ function mainloop() {
 
   if(flg) {
     canvas.classList.add('atari');
+    settingLife();
   } else {
     canvas.classList.remove('atari');
   }
@@ -178,7 +207,7 @@ function updateTime() {
     LimitTime--;
     timerId.innerHTML = LimitTime;
     if (LimitTime < 0) {
-      // alert('Game Over!');
+      // alert('ゲーム終了');
       init();
       return;
     }
