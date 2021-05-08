@@ -3,42 +3,8 @@ const ctx = canvas.getContext('2d');
 let currentSelected = null;
 let characters = [];
 let enemies = [];
-// 制限時間について
-const timerId = document.getElementById('timer');
-let LimitTime;
 
 const lifeCounter = document.getElementsByClassName('js-lifeCount');
-// let lifeCounterValue = lifeCounter[0].value;
-// console.log(lifeCounterValue);
-
-// const createBtn = document.getElementById('js-create');
-
-
-// createBtn.addEventListener("click", (e) => {
-//   // e.preventDefault();//「クリックしたとき」のデフォルト挙動キャンセル
-//   window.onkeydown = null;
-//   mode = 'create';
-// });
-
-// クラスにしても良い
-// class MoveBtn {
-//   constructor(mode) {
-//     this.mode = mode;
-//     const moveBtn = document.getElementById('js-move');
-//     moveBtn.addEventListener("click", (e) => {
-//       e.preventDefault();
-//       // モードがmoveの時だけonkeydown使うのでこちらに移動
-      // window.onkeydown = (e) => {
-      //   if (currentSelected === null) {
-      //     return
-      //   }
-      //   ctx.clearRect(0, 0, 800, 800);
-      //   currentSelected.move(e.code);
-      // }
-//       mode = 'move'
-//     });
-//   }
-// }
 
 // ゲームオブジェクトクラス（共通クラス）
 class GameObject {
@@ -130,23 +96,26 @@ class Enemy extends GameObject {
   
 }
 
-// canvas.addEventListener("click", e => {
-//   const rect = canvas.getBoundingClientRect();//getBoundingClientRect();メソッドでキャンバスの座標を取得する
-//   const point = {
-//     x: e.clientX,
-//     y: e.clientY
-//   }
-//   if (mode === 'move') {
-//     currentSelected = null;
-//     characters.forEach(chara => {
-//       chara.clicked(point);
-//     });
-//   } 
-//   // else if (mode === 'create') {
-//   //   new Character(point.x - 100, point.y - 100, './img/business_unicorn_company.png', 'chara_1');
-//   // }
-
-// });
+class Timer {
+  constructor() {
+    // 制限時間について
+    this.timerId = document.getElementById('timer');
+    this.LimitTime = 5;
+    this.timerId.innerHTML = this.LimitTime;
+    this.intervalId = null;
+  }
+  start() {
+    this.intervalId = setInterval(() => {
+      this.LimitTime--;
+      this.timerId.innerHTML = this.LimitTime;
+      if (this.LimitTime === 0) {
+        clearInterval(this.intervalId);
+        // alert('ゲーム終了')
+        return;
+      }
+    }, 1000);
+  }
+}
 
 // 敵の処理
 function generateEnemy() {
@@ -197,27 +166,10 @@ function mainloop() {
 }
 mainloop();
 
-function init() {
-  LimitTime = 20;
-  timerId.innerHTML = LimitTime;
-}
-
-function updateTime() {
-  setTimeout(function () {
-    LimitTime--;
-    timerId.innerHTML = LimitTime;
-    if (LimitTime < 0) {
-      // alert('ゲーム終了');
-      init();
-      return;
-    }
-    updateTime();
-  }, 1000);
-}
 
 window.onload = function () {
-  init();
-  updateTime();
+  const initialTime = new Timer();
+  initialTime.start();
   const initialChara = new Character(250, 550, './img/business_unicorn_company.png', 'chara_1');
   initialChara.draw();
 }
