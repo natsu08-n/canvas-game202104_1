@@ -1,10 +1,9 @@
+// 各変数設定
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let currentSelected = null;
 let characters = [];
 let enemies = [];
-
-const lifeCounter = document.getElementsByClassName('js-lifeCount');
 
 // ゲームオブジェクトクラス（共通クラス）
 class GameObject {
@@ -66,7 +65,6 @@ class Character extends GameObject {
     this.hit = false;
     enemies.forEach(enemy => {
       let distance = this.calcDistance(enemy);
-      // console.log(distance);
       if (distance <= 30) {
         this.hit = true;
       }
@@ -93,12 +91,11 @@ class Enemy extends GameObject {
     this.centerX = this.x + this.width / 2;
     this.centerY = this.y + this.height / 2;
   }
-  
 }
 
+// 制限時間
 class Timer {
   constructor() {
-    // 制限時間について
     this.timerId = document.getElementById('timer');
     this.LimitTime = 5;
     this.timerId.innerHTML = this.LimitTime;
@@ -125,17 +122,20 @@ function generateEnemy() {
   }
 }
 
-setInterval(generateEnemy, 2000);
+//ユニコーンのライフ設定
+class CharaLife {
+  constructor() {
+    this.lifeCounter = document.getElementsByClassName('js-lifeCount');
+    this.lifeCounterValue = this.lifeCounter[0].value;
+  }
+  setLife() {
+    this.lifeCounterValue -= 2;
+    this.lifeCounter[0].setAttribute("value", this.lifeCounterValue);
 
-function settingLife() {
-  let lifeCounterValue = lifeCounter[0].value;
-  lifeCounterValue = lifeCounterValue - 2;
-  console.log(lifeCounterValue);
-  lifeCounter[0].setAttribute("value", lifeCounterValue);
-
-  if(lifeCounterValue <= 0) {
-    console.log("ゲームオーバー");
-    return;
+    if (this.lifeCounterValue <= 0) {
+      console.log("ゲームオーバー");
+      return;
+    }
   }
 }
 
@@ -145,7 +145,7 @@ function mainloop() {
   // ユニコーンの処理
   characters.forEach(chara => {
     chara.draw();
-    if(chara.hit) {
+    if (chara.hit) {
       flg = true;
     }
   });
@@ -155,9 +155,10 @@ function mainloop() {
     enemy.draw();
   })
 
-  if(flg) {
+  if (flg) {
     canvas.classList.add('atari');
-    settingLife();
+    const charactorLife = new CharaLife();
+    charactorLife.setLife();
   } else {
     canvas.classList.remove('atari');
   }
@@ -166,11 +167,12 @@ function mainloop() {
 }
 mainloop();
 
-
+// 画面ロード後処理
 window.onload = function () {
   const initialTime = new Timer();
   initialTime.start();
   const initialChara = new Character(250, 550, './img/business_unicorn_company.png', 'chara_1');
   initialChara.draw();
+  setInterval(generateEnemy, 2000);
 }
 
