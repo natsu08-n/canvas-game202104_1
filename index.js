@@ -2,7 +2,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let currentSelected = null;
-let characters = [];
+let character = null;
 let enemies = [];
 
 // ゲームオブジェクトクラス（共通クラス）
@@ -32,7 +32,6 @@ class Character extends GameObject {
     super(x, y, src, id)
     this.speed = 20;
     this.hit = false;
-    characters.push(this);
     this.initialize();
   }
   initialize() {
@@ -59,7 +58,6 @@ class Character extends GameObject {
     // centerX,Yを再計算
     this.centerX = this.x + this.width / 2;
     this.centerY = this.y + this.height / 2;
-    this.collision();
   }
   collision() {
     this.hit = false;
@@ -77,16 +75,30 @@ class Character extends GameObject {
     let distance = Math.sqrt(sqrt);
     return distance;
   }
+  update() {
+    this.draw();
+    this.collision();
+  }
 }
 
 // 敵（オーク）のクラス
 class Enemy extends GameObject {
   constructor(x, y, src, id) {
     super(x, y, src, id)
+    this.originX = this.x;
     this.speed = Math.random() * 5 + 3;
+    this.speedX = Math.random() * 2 + 3;
   }
   move() {
-    this.x += 0;
+    if(this.x > this.originX + 30) {
+      this.speedX *= -1;
+    } else if (this.x < this.originX - 30){
+      this.speedX *= -1;
+    }
+    if(this.y > 600) {
+      this.y = 0;
+    }
+    this.x += this.speedX;
     this.y += this.speed;
     this.centerX = this.x + this.width / 2;
     this.centerY = this.y + this.height / 2;
@@ -117,7 +129,7 @@ class Timer {
 // 敵の処理
 function generateEnemy() {
   for (let i = 0; i < 6; i++) {
-    let enemy = new Enemy(110 * i, 0, './img/fantasy_orc.png', 'enemy_1');
+    let enemy = new Enemy(Math.random()* 500, 0, './img/fantasy_orc.png', 'enemy_1');
     enemies.push(enemy);
   }
 }
@@ -139,23 +151,19 @@ class CharaLife {
   }
 }
 
+character = new Character(250, 550, './img/business_unicorn_company.png', 'chara_1');
+
 function mainloop() {
-  let flg = false;
   ctx.clearRect(0, 0, 800, 800);
   // ユニコーンの処理
-  characters.forEach(chara => {
-    chara.draw();
-    if (chara.hit) {
-      flg = true;
-    }
-  });
+  character.update();
 
   enemies.forEach(enemy => {
     enemy.move();
     enemy.draw();
   })
 
-  if (flg) {
+  if (character.hit) {
     canvas.classList.add('atari');
     const charactorLife = new CharaLife();
     charactorLife.setLife();
@@ -171,8 +179,7 @@ mainloop();
 window.onload = function () {
   const initialTime = new Timer();
   initialTime.start();
-  const initialChara = new Character(250, 550, './img/business_unicorn_company.png', 'chara_1');
-  initialChara.draw();
+  character.draw();
   setInterval(generateEnemy, 2000);
 }
 
