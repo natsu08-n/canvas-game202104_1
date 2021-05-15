@@ -7,7 +7,7 @@
 
 body {
   background-color: #222;
-  height: 800px;
+  height: 765px;
 }
 
 .canvas__initial {
@@ -71,5 +71,5 @@ body {
 
 .atari {
   /* background-color: yellow; */
-  background:linear-gradient(90deg, #ffea00, #ffd900);
+  background:linear-gradient(90deg, #f5e107, #ffd900);
 }

@@ -1,4 +1,6 @@
+//========================================
 // ＊＊＊クラス＊＊＊（本当は別ファイルに分ける）
+//========================================
 // ゲームオブジェクトクラス（共通クラス）
 class GameObject {
   constructor(x, y, src, id) {
@@ -41,8 +43,9 @@ class Character extends GameObject {
     window.onkeydown = (e) => {
       if(e.code === "Space") {
         this.shot(e.code);
+      } else {
+        this.move(e.code);
       }
-      this.move(e.code);
     }
   }
   move(direction) {
@@ -70,7 +73,7 @@ class Character extends GameObject {
     return distance;
   }
   shot() {
-    new Bullet(this.x, this.y, './img/moon.png', 'moon_1');
+    new Bullet(this.x, this.y, './img/blue_ball.png', 'moon_1');
   }
   update() {
     this.draw();
@@ -93,12 +96,41 @@ class Bullet extends GameObject {
     super(x, y, src, id)
     this.speed = 20;
     this.hit = false;
+    // 弾のサイズを継承ではなくこのクラスで指定
+    this.width = 20;
+    this.height = 20;
   }
   update() {
     this.y -= 2;
     this.draw();
+    this.collision();
+    this.isAttack();
+  }
+  collision() {
+    this.hit = false;
+    enemies.forEach(enemy => {
+      let distance = this.calcDistance(enemy);
+      if (distance <= 30) {
+        this.hit = true;
+        // console.log(enemy);
+        ctx.clearRect(enemy.x, enemy.y, 50, 50);
+        return;
+      }
+    });
+  }
+  // 距離を計算するメソッド
+  calcDistance(enemy) {
+    //敵との当たり判定（2点間の中心座標の距離）
+    let sqrt = Math.pow(this.x - enemy.x, 2) + Math.pow(this.y - enemy.y, 2);
+    let distance = Math.sqrt(sqrt);
+    return distance;
   }
   // 弾が敵とぶつかっていたら敵が消滅するメソッド
+  isAttack() {
+    if (this.hit) {
+      // console.log("ボールが敵に当たった");
+    }
+  }
 }
 
 // 敵（オーク）のクラス
@@ -170,7 +202,9 @@ class CharaLife {
   }
 }
 
-// 各変数設定(グローバルはなるべくconstだけにしたい)
+//========================================
+// ***各変数設定***(グローバルはなるべくconstだけにする)
+//========================================
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let enemies = [];
@@ -180,7 +214,9 @@ const charactorLife = new CharaLife();
 console.log(charactorLife);
 const initialTime = new Timer();
 
-
+//========================================
+// ***関数***
+//========================================
 // 敵の処理
 function generateEnemy() {
   for (let i = 0; i < 6; i++) {
@@ -203,8 +239,9 @@ function mainloop() {
   requestAnimationFrame(mainloop);
 }
 
-
-// 画面ロード後処理
+//========================================
+// 画面ロード時の処理
+//========================================
 window.onload = function () {
   initialTime.start();
   character.draw();
