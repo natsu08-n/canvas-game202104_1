@@ -5,12 +5,17 @@
   border-radius: 6px;
 }
 
+body {
+  background-color: #222;
+  height: 800px;
+}
+
 .canvas__initial {
-  background-color: #94846a;
+  background:linear-gradient(#bfa46f, #716246);
 }
 
 .main__title {
-  color: #0099FF;
+  color: #89c3eb;
   font-size: 24px;
   font-weight: bold;
   margin-left: 20px;
@@ -23,10 +28,17 @@
   width: 600px;
 }
 
+.count__container p {
+  color: #fff;
+}
+
 .time__count {
   font-size: 20px;
   font-weight: bold;
-  opacity: .5;
+  color: #ffea00;
+  display: inline-block;
+  width: 30px;
+  text-align: right;
 }
 
 .btn__container {
@@ -58,5 +70,6 @@
 }
 
 .atari {
-  background-color: yellow;
+  /* background-color: yellow; */
+  background:linear-gradient(90deg, #ffea00, #ffd900);
 }

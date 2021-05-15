@@ -1,10 +1,4 @@
-// 各変数設定
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-let currentSelected = null;
-let character = null;
-let enemies = [];
-
+// ＊＊＊クラス＊＊＊（本当は別ファイルに分ける）
 // ゲームオブジェクトクラス（共通クラス）
 class GameObject {
   constructor(x, y, src, id) {
@@ -26,7 +20,7 @@ class GameObject {
   }
 }
 
-// ユニコーンのクラス
+// ユニコーンのクラス:キャラクターに対する処理はこちらにまとめるとみやすい
 class Character extends GameObject {
   constructor(x, y, src, id) {
     super(x, y, src, id)
@@ -38,11 +32,6 @@ class Character extends GameObject {
     window.onkeydown = (e) => {
       ctx.clearRect(0, 0, 800, 800);
       this.move(e.code);
-    }
-  }
-  clicked(point) {
-    if ((point.x > this.x && this.x + 200 > point.x) && (point.y > this.y && this.y + 200 > point.y)) {
-      currentSelected = this;
     }
   }
   move(direction) {
@@ -78,6 +67,15 @@ class Character extends GameObject {
   update() {
     this.draw();
     this.collision();
+    this.isHit()
+  }
+  isHit() {
+    if (this.hit) {
+      canvas.classList.add('atari');
+      charactorLife.setLife();
+    } else {
+      canvas.classList.remove('atari');
+    }
   }
 }
 
@@ -86,13 +84,13 @@ class Enemy extends GameObject {
   constructor(x, y, src, id) {
     super(x, y, src, id)
     this.originX = this.x;
-    this.speed = Math.random() * 5 + 3;
-    this.speedX = Math.random() * 2 + 3;
+    this.speed = Math.random() * 2 + 1;
+    this.speedX = Math.random() * 2 + 1;
   }
   move() {
-    if(this.x > this.originX + 30) {
+    if(this.x > this.originX + 50) {
       this.speedX *= -1;
-    } else if (this.x < this.originX - 30){
+    } else if (this.x < this.originX - 35){
       this.speedX *= -1;
     }
     if(this.y > 600) {
@@ -112,6 +110,7 @@ class Timer {
     this.LimitTime = 5;
     this.timerId.innerHTML = this.LimitTime;
     this.intervalId = null;
+    this.isStop = false;
   }
   start() {
     this.intervalId = setInterval(() => {
@@ -119,18 +118,11 @@ class Timer {
       this.timerId.innerHTML = this.LimitTime;
       if (this.LimitTime === 0) {
         clearInterval(this.intervalId);
+        this.isStop = true;
         // alert('ゲーム終了')
         return;
       }
     }, 1000);
-  }
-}
-
-// 敵の処理
-function generateEnemy() {
-  for (let i = 0; i < 6; i++) {
-    let enemy = new Enemy(Math.random()* 500, 0, './img/fantasy_orc.png', 'enemy_1');
-    enemies.push(enemy);
   }
 }
 
@@ -145,15 +137,33 @@ class CharaLife {
     this.lifeCounter[0].setAttribute("value", this.lifeCounterValue);
 
     if (this.lifeCounterValue <= 0) {
-      console.log("ゲームオーバー");
+      // console.log("ゲームオーバー");
       return;
     }
   }
 }
 
-character = new Character(250, 550, './img/business_unicorn_company.png', 'chara_1');
+// 各変数設定(グローバルはなるべくconstだけにしたい)
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const character = new Character(250, 550, './img/business_unicorn_company.png', 'chara_1');
+const charactorLife = new CharaLife();
+const initialTime = new Timer();
+let enemies = [];
+
+// 敵の処理
+function generateEnemy() {
+  for (let i = 0; i < 6; i++) {
+    let enemy = new Enemy(Math.random()* 500, 0, './img/fantasy_orc.png', 'enemy_1');
+    enemies.push(enemy);
+  }
+}
 
 function mainloop() {
+  if(initialTime.isStop) {
+    return;
+  }
+
   ctx.clearRect(0, 0, 800, 800);
   // ユニコーンの処理
   character.update();
@@ -163,23 +173,15 @@ function mainloop() {
     enemy.draw();
   })
 
-  if (character.hit) {
-    canvas.classList.add('atari');
-    const charactorLife = new CharaLife();
-    charactorLife.setLife();
-  } else {
-    canvas.classList.remove('atari');
-  }
-
   requestAnimationFrame(mainloop);
 }
-mainloop();
+
 
 // 画面ロード後処理
 window.onload = function () {
-  const initialTime = new Timer();
   initialTime.start();
   character.draw();
-  setInterval(generateEnemy, 2000);
+  generateEnemy();
+  mainloop();
 }
 
