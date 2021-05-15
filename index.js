@@ -14,6 +14,8 @@ class GameObject {
     this.image.src = this.src;
     this.image.id = this.id;
     this.image.onload = () => this.draw();
+    // キャラと敵のオブジェクトが入る
+    gemeObjects.push(this);
   }
   draw() {
     ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
@@ -27,23 +29,26 @@ class Character extends GameObject {
     this.speed = 20;
     this.hit = false;
     this.initialize();
+    // arr 1回だけ呼び出すとメモリ節約になる
+    this.arr = {
+      ArrowRight: { x:20, y:0 },
+      ArrowLeft: { x:-20, y:0},
+      ArrowDown: { x:0, y:-20 },
+      ArrowUp: { x:0, y:20 },
+    }
   }
   initialize() {
     window.onkeydown = (e) => {
-      ctx.clearRect(0, 0, 800, 800);
+      if(e.code === "Space") {
+        this.shot(e.code);
+      }
       this.move(e.code);
     }
   }
   move(direction) {
-    if (direction === "ArrowRight") {
-      this.x += 20;
-    } else if (direction === "ArrowLeft") {
-      this.x -= 20;
-    } else if (direction === "ArrowUp") {
-      this.y += 20;
-    } else if (direction === "ArrowDown") {
-      this.y -= 20;
-    }
+    this.x += this.arr[direction].x;
+    this.y += this.arr[direction].y;
+
     // centerX,Yを再計算
     this.centerX = this.x + this.width / 2;
     this.centerY = this.y + this.height / 2;
@@ -64,6 +69,9 @@ class Character extends GameObject {
     let distance = Math.sqrt(sqrt);
     return distance;
   }
+  shot() {
+    new Bullet(this.x, this.y, './img/moon.png', 'moon_1');
+  }
   update() {
     this.draw();
     this.collision();
@@ -77,6 +85,20 @@ class Character extends GameObject {
       canvas.classList.remove('atari');
     }
   }
+}
+
+// キャラクターが攻撃する
+class Bullet extends GameObject {
+  constructor(x, y, src, id) {
+    super(x, y, src, id)
+    this.speed = 20;
+    this.hit = false;
+  }
+  update() {
+    this.y -= 2;
+    this.draw();
+  }
+  // 弾が敵とぶつかっていたら敵が消滅するメソッド
 }
 
 // 敵（オーク）のクラス
@@ -101,13 +123,18 @@ class Enemy extends GameObject {
     this.centerX = this.x + this.width / 2;
     this.centerY = this.y + this.height / 2;
   }
+  // オブジェクトの中身を更新
+  update() {
+    this.move();
+    this.draw();
+  }
 }
 
 // 制限時間
 class Timer {
   constructor() {
     this.timerId = document.getElementById('timer');
-    this.LimitTime = 5;
+    this.LimitTime = 10;
     this.timerId.innerHTML = this.LimitTime;
     this.intervalId = null;
     this.isStop = false;
@@ -146,10 +173,13 @@ class CharaLife {
 // 各変数設定(グローバルはなるべくconstだけにしたい)
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+let enemies = [];
+let gemeObjects = [];
 const character = new Character(250, 550, './img/business_unicorn_company.png', 'chara_1');
 const charactorLife = new CharaLife();
+console.log(charactorLife);
 const initialTime = new Timer();
-let enemies = [];
+
 
 // 敵の処理
 function generateEnemy() {
@@ -165,12 +195,9 @@ function mainloop() {
   }
 
   ctx.clearRect(0, 0, 800, 800);
-  // ユニコーンの処理
-  character.update();
 
-  enemies.forEach(enemy => {
-    enemy.move();
-    enemy.draw();
+  gemeObjects.forEach(obj => {
+    obj.update();
   })
 
   requestAnimationFrame(mainloop);
