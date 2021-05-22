@@ -49,8 +49,10 @@ class Character extends GameObject {
     }
   }
   move(direction) {
-    this.x += this.arr[direction].x;
-    this.y += this.arr[direction].y;
+    if(this.arr[direction]) {
+      this.x += this.arr[direction].x;
+      this.y += this.arr[direction].y;
+    }
 
     // centerX,Yを再計算
     this.centerX = this.x + this.width / 2;
@@ -95,7 +97,6 @@ class Bullet extends GameObject {
   constructor(x, y, src, id) {
     super(x, y, src, id)
     this.speed = 20;
-    this.hit = false;
     // 弾のサイズを継承ではなくこのクラスで指定
     this.width = 20;
     this.height = 20;
@@ -104,19 +105,15 @@ class Bullet extends GameObject {
     this.y -= 2;
     this.draw();
     this.collision();
-    this.isAttack();
   }
   collision() {
-    this.hit = false;
     enemies.forEach(enemy => {
       let distance = this.calcDistance(enemy);
-      if (distance <= 30) {
-        this.hit = true;
-        // console.log(enemy);
-        ctx.clearRect(enemy.x, enemy.y, 50, 50);
-        return;
+      if (distance <= 30 && enemy.isDead === false) {
+        enemy.dameged();
       }
     });
+    return enemies;
   }
   // 距離を計算するメソッド
   calcDistance(enemy) {
@@ -125,12 +122,6 @@ class Bullet extends GameObject {
     let distance = Math.sqrt(sqrt);
     return distance;
   }
-  // 弾が敵とぶつかっていたら敵が消滅するメソッド
-  isAttack() {
-    if (this.hit) {
-      // console.log("ボールが敵に当たった");
-    }
-  }
 }
 
 // 敵（オーク）のクラス
@@ -138,6 +129,7 @@ class Enemy extends GameObject {
   constructor(x, y, src, id) {
     super(x, y, src, id)
     this.originX = this.x;
+    this.isDead = false; //初期値はfalseが良い
     this.speed = Math.random() * 2 + 1;
     this.speedX = Math.random() * 2 + 1;
   }
@@ -160,13 +152,18 @@ class Enemy extends GameObject {
     this.move();
     this.draw();
   }
+  dameged() {
+    this.isDead = true;
+    score.add(100);
+    gemeObjects = gemeObjects.filter(obj => obj !== this ); //自身に一致しない
+  }
 }
 
 // 制限時間
 class Timer {
   constructor() {
     this.timerId = document.getElementById('timer');
-    this.LimitTime = 10;
+    this.LimitTime = 120;
     this.timerId.innerHTML = this.LimitTime;
     this.intervalId = null;
     this.isStop = false;
@@ -202,6 +199,22 @@ class CharaLife {
   }
 }
 
+// スコアのクラス、
+// 画面にスコア表示
+// addScore
+class Score {
+  constructor() {
+    this.score = 0;
+    this.scoreId = document.getElementById('score');
+    this.scoreId.innerHTML = this.score;
+  }
+  add(num) {
+    this.score += num;
+    this.scoreId.innerHTML = this.score;
+  }
+}
+
+
 //========================================
 // ***各変数設定***(グローバルはなるべくconstだけにする)
 //========================================
@@ -209,10 +222,11 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let enemies = [];
 let gemeObjects = [];
+let DefeatedEnemies = [];
 const character = new Character(250, 550, './img/business_unicorn_company.png', 'chara_1');
 const charactorLife = new CharaLife();
-console.log(charactorLife);
 const initialTime = new Timer();
+const score = new Score();
 
 //========================================
 // ***関数***
@@ -220,7 +234,7 @@ const initialTime = new Timer();
 // 敵の処理
 function generateEnemy() {
   for (let i = 0; i < 6; i++) {
-    let enemy = new Enemy(Math.random()* 500, 0, './img/fantasy_orc.png', 'enemy_1');
+    let enemy = new Enemy(Math.random()* 500, 0, './img/fantasy_orc.png', `enemy_${i}`);
     enemies.push(enemy);
   }
 }
