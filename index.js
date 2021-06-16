@@ -33,15 +33,15 @@ class Character extends GameObject {
     this.initialize();
     // arr 1回だけ呼び出すとメモリ節約になる
     this.arr = {
-      ArrowRight: { x:20, y:0 },
-      ArrowLeft: { x:-20, y:0},
-      ArrowDown: { x:0, y:-20 },
-      ArrowUp: { x:0, y:20 },
+      ArrowRight: { x: 20, y: 0 },
+      ArrowLeft: { x: -20, y: 0 },
+      ArrowDown: { x: 0, y: -20 },
+      ArrowUp: { x: 0, y: 20 },
     }
   }
   initialize() {
     window.onkeydown = (e) => {
-      if(e.code === "Space") {
+      if (e.code === "Space") {
         this.shot(e.code);
       } else {
         this.move(e.code);
@@ -49,7 +49,7 @@ class Character extends GameObject {
     }
   }
   move(direction) {
-    if(this.arr[direction]) {
+    if (this.arr[direction]) {
       this.x += this.arr[direction].x;
       this.y += this.arr[direction].y;
     }
@@ -80,17 +80,28 @@ class Character extends GameObject {
   update() {
     this.draw();
     this.collision();
-    this.isHit()
+    this.isHit();
   }
   isHit() {
     if (this.hit) {
-      canvas.classList.add('atari');
+      canvas.classList.add('atari'); //canvasクラスの関心ごとだがキャラクタークラスで操作してる
       charactorLife.setLife();
     } else {
       canvas.classList.remove('atari');
     }
   }
 }
+
+// class CanvasController {
+//   update() {
+//     if (character.hit) {
+//       canvas.classList.add('atari'); //canvasクラスの関心ごとだがキャラクタークラスで操作してる
+//       charactorLife.setLife();
+//     } else {
+//       canvas.classList.remove('atari');
+//     }
+//   }
+// }
 
 // キャラクターが攻撃する
 class Bullet extends GameObject {
@@ -134,12 +145,12 @@ class Enemy extends GameObject {
     this.speedX = Math.random() * 2 + 1;
   }
   move() {
-    if(this.x > this.originX + 50) {
+    if (this.x > this.originX + 50) {
       this.speedX *= -1;
-    } else if (this.x < this.originX - 35){
+    } else if (this.x < this.originX - 35) {
       this.speedX *= -1;
     }
-    if(this.y > 600) {
+    if (this.y > 600) {
       this.y = 0;
     }
     this.x += this.speedX;
@@ -155,7 +166,8 @@ class Enemy extends GameObject {
   dameged() {
     this.isDead = true;
     score.add(100);
-    gemeObjects = gemeObjects.filter(obj => obj !== this ); //自身に一致しない
+    gemeObjects = gemeObjects.filter(obj => obj !== this); //自身に一致しない
+    enemies = enemies.filter(obj => obj !== this); 
   }
 }
 
@@ -163,7 +175,7 @@ class Enemy extends GameObject {
 class Timer {
   constructor() {
     this.timerId = document.getElementById('timer');
-    this.LimitTime = 120;
+    this.LimitTime = 20;
     this.timerId.innerHTML = this.LimitTime;
     this.intervalId = null;
     this.isStop = false;
@@ -201,7 +213,6 @@ class CharaLife {
 
 // スコアのクラス、
 // 画面にスコア表示
-// addScore
 class Score {
   constructor() {
     this.score = 0;
@@ -234,13 +245,13 @@ const score = new Score();
 // 敵の処理
 function generateEnemy() {
   for (let i = 0; i < 6; i++) {
-    let enemy = new Enemy(Math.random()* 500, 0, './img/fantasy_orc.png', `enemy_${i}`);
+    let enemy = new Enemy(Math.random() * 500, 0, './img/fantasy_orc.png', `enemy_${i}`);
     enemies.push(enemy);
   }
 }
 
 function mainloop() {
-  if(initialTime.isStop) {
+  if (initialTime.isStop) {
     return;
   }
 
@@ -262,4 +273,3 @@ window.onload = function () {
   generateEnemy();
   mainloop();
 }
-
