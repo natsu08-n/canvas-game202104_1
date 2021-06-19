@@ -1,11 +1,44 @@
+
+
 #canvas {
   border: 5px solid #F5F5F5;
   border-radius: 6px;
 }
 
+body {
+  background-color: #222;
+  height: 765px;
+}
+
+.canvas__initial {
+  background:linear-gradient(#bfa46f, #716246);
+}
+
 .main__title {
-  color: #0099FF;
+  color: #89c3eb;
+  font-size: 24px;
+  font-weight: bold;
   margin-left: 20px;
+}
+
+.count__container {
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
+  width: 600px;
+}
+
+.count__container p {
+  color: #fff;
+}
+
+.time__count {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffea00;
+  display: inline-block;
+  width: 30px;
+  text-align: right;
 }
 
 .btn__container {
@@ -34,4 +67,9 @@
 
 .btn:first-child {
   margin-right: 10px;
+}
+
+.atari {
+  /* background-color: yellow; */
+  background:linear-gradient(90deg, #f5e107, #ffd900);
 }
