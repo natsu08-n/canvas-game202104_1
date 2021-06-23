@@ -92,17 +92,6 @@ class Character extends GameObject {
   }
 }
 
-// class CanvasController {
-//   update() {
-//     if (character.hit) {
-//       canvas.classList.add('atari'); //canvasクラスの関心ごとだがキャラクタークラスで操作してる
-//       charactorLife.setLife();
-//     } else {
-//       canvas.classList.remove('atari');
-//     }
-//   }
-// }
-
 // キャラクターが攻撃する
 class Bullet extends GameObject {
   constructor(x, y, src, id) {
@@ -175,7 +164,7 @@ class Enemy extends GameObject {
 class Timer {
   constructor() {
     this.timerId = document.getElementById('timer');
-    this.LimitTime = 20;
+    this.LimitTime = 5;
     this.timerId.innerHTML = this.LimitTime;
     this.intervalId = null;
     this.isStop = false;
@@ -197,7 +186,7 @@ class Timer {
     var params = new URLSearchParams();
     params.append('user_name', 'Yamada Tarou')
     params.append('score', 100)
-    const res = await axios.post('http://localhost:3000/create', params)//クロスオリジンリソースシェアリングエラー解消
+    const res = await axios.post('http://localhost:3000/create', params)//クロスオリジンリソースシェアリング
   }
 }
 

@@ -2,7 +2,12 @@ const express = require("express");
 const app = express();
 const pg = require("pg");
 app.use(express.urlencoded({extended: true}));
-
+//express
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");//どこからアクセス許可するか→全て（*）
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();//次のミドルウェア関数に行くために
+});
 // posticoの情報に書き換え
 var pgPool = new pg.Pool({
   database: "hogehoge",
@@ -22,9 +27,9 @@ app.post("/create", function (req, res) {
   console.log(req.body);
   var query = {
     text:
-    'INSERT INTO "public"."ranking"("id", "user_name", "score") VALUES($1, $2, $3) RETURNING "id", "user_name", "score"',
-    values:[req.body.id, req.body.user_name, req.body.score]
-  };
+    'INSERT INTO "public"."ranking"("user_name", "score") VALUES($1, $2) RETURNING "id", "user_name", "score"',
+    values:[req.body.user_name, req.body.score]
+  };//key重複のため、こちらでは指定しない
 
   pgPool.connect(function (err, client) {
     if (err) {
