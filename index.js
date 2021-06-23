@@ -187,10 +187,17 @@ class Timer {
       if (this.LimitTime === 0) {
         clearInterval(this.intervalId);
         this.isStop = true;
+        this.saveScore();
         // alert('ゲーム終了')
         return;
       }
     }, 1000);
+  }
+  async saveScore() {
+    var params = new URLSearchParams();
+    params.append('user_name', 'Yamada Tarou')
+    params.append('score', 100)
+    const res = await axios.post('http://localhost:3000/create', params)//クロスオリジンリソースシェアリングエラー解消
   }
 }
 

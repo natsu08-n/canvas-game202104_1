@@ -1,0 +1,26 @@
+{
+  "name": "canvas-game202104_1",
+  "version": "1.0.0",
+  "description": "## (20210417時点のmainブランチ仕様)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/natsu08-n/canvas-game202104_1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/natsu08-n/canvas-game202104_1/issues"
+  },
+  "homepage": "https://github.com/natsu08-n/canvas-game202104_1#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "pg": "^8.6.0"
+  }
+}
