@@ -176,16 +176,21 @@ class Timer {
       if (this.LimitTime === 0) {
         clearInterval(this.intervalId);
         this.isStop = true;
+        this.form() //とりあえず設定中
         this.saveScore();
-        // alert('ゲーム終了')
         return;
       }
     }, 1000);
   }
+  form() {
+    form.style.display = 'block';
+    overlay.style.display = 'block';
+  }
+
   async saveScore() {
     var params = new URLSearchParams();
-    params.append('user_name', 'Yamada Tarou')
-    params.append('score', 100)
+    params.append('user_name', userName.value);
+    params.append('score', score.value);
     const res = await axios.post('http://localhost:3000/create', params)//クロスオリジンリソースシェアリング
   }
 }
@@ -201,7 +206,6 @@ class CharaLife {
     this.lifeCounter[0].setAttribute("value", this.lifeCounterValue);
 
     if (this.lifeCounterValue <= 0) {
-      // console.log("ゲームオーバー");
       return;
     }
   }
@@ -211,13 +215,13 @@ class CharaLife {
 // 画面にスコア表示
 class Score {
   constructor() {
-    this.score = 0;
+    this.value = 0;
     this.scoreId = document.getElementById('score');
-    this.scoreId.innerHTML = this.score;
+    this.scoreId.innerHTML = this.value;
   }
   add(num) {
-    this.score += num;
-    this.scoreId.innerHTML = this.score;
+    this.value += num;
+    this.scoreId.innerHTML = this.value;
   }
 }
 
@@ -226,6 +230,9 @@ class Score {
 // ***各変数設定***(グローバルはなるべくconstだけにする)
 //========================================
 const canvas = document.getElementById('canvas');
+const userName = document.getElementById('js-userName');
+const form = document.getElementById('js-form');
+const overlay = document.getElementById('js-overlay');
 const ctx = canvas.getContext('2d');
 let enemies = [];
 let gemeObjects = [];
